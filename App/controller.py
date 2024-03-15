@@ -88,7 +88,7 @@ def loadBooks(control):
     Carga los libros del archivo. Por cada libro se indica al
     modelo que debe adicionarlo al catalogo.
     """
-    booksfile = cf.data_dir + 'GoodReads/books-small.csv'
+    booksfile = cf.data_dir + 'GoodReads/books.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for book in input_file:
         model.addBook(control['model'], book)
@@ -109,7 +109,7 @@ def loadBooksTags(control):
     """
     Carga la información que asocia tags con libros en el catalogo
     """
-    booktagsfile = cf.data_dir + 'GoodReads/book_tags-small.csv'
+    booktagsfile = cf.data_dir + 'GoodReads/book_tags.csv'
     input_file = csv.DictReader(open(booktagsfile, encoding='utf-8'))
     for booktag in input_file:
         model.addBookTag(control['model'], booktag)
@@ -216,6 +216,30 @@ def sortBooksByYear(control, year, rank, memflag=True):
     en un año ordenados por rating
     """
     # TODO lab 7, completar cambios para medir tiempo y memoria
+    books = None
+    # toma el tiempo al inicio del proceso
+    start_time = getTime()
+    # inicializa el proceso para medir memoria
+    if memflag is True:
+        tracemalloc.start()
+        start_memory = getMemory()
+    # ejecutando funcion a medir
+    books = model.sortBooksByYear(control['model'], year, rank)
+    # toma el tiempo al final del proceso
+    stop_time = getTime()
+    # calculando la diferencia en tiempo
+    delta_time = deltaTime(stop_time, start_time)
+    # finaliza el proceso para medir memoria
+    if memflag is True:
+        stop_memory = getMemory()
+        tracemalloc.stop()
+        # calcula la diferencia de memoria
+        delta_memory = deltaMemory(stop_memory, start_memory)
+        # respuesta con los datos de tiempo y memoria
+        return books, delta_time, delta_memory
+    else:
+    # respuesta sin medir memoria
+        return books, delta_time
     pass
 
 
